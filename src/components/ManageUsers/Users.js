@@ -4,15 +4,19 @@ import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import ModalDelete from "./ModalDelete";
 import ModalUser from "./ModalUser";
-import { set } from "lodash";
+import { set, size } from "lodash";
 const Users = (props) => {
     const [listUsers, setListUsers] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
     const [currentLimit, setCurrentLimit] = useState(5);
     const [totalPage, setTotalPage] = useState(0)
     const [isShowModalDelete, setIsShowModalDelete] = useState(false)
+    //Modal delete user
     const [dataModal, setDataModal] = useState({})
+    //Modal edit user
+    const [dataModalUser, setDataModalUser] = useState({})
     const [isShowModalUser, setIsShowModalUser] = useState(false)
+    const [actionModalUser, setActionModalUser] = useState("")
     useEffect(() => {
         fetchUserData();
     }, [currentPage])
@@ -37,8 +41,10 @@ const Users = (props) => {
         setDataModal({});
         setIsShowModalDelete(false);
     }
-    const onHideModalUser = () => {
+    const onHideModalUser = async () => {
+        setDataModalUser({});
         setIsShowModalUser(false)
+        await fetchUserData()
     }
     const confirmDeleteUser = async () => {
         let respone = await deleteUserService(dataModal);
@@ -51,15 +57,34 @@ const Users = (props) => {
             toast.error(respone.data.EM)
         }
     }
+    const handleEditUser = (user) => {
+        setActionModalUser("UPDATE")
+        setDataModalUser(user)
+        setIsShowModalUser(true)
+
+    }
+    const handleCreateUser = () => {
+        setIsShowModalUser(true)
+        setActionModalUser("CREATE")
+    }
+    const handleRefesh = async () => {
+        await fetchUserData();
+    }
     return (
         <>
             <div className="container">
                 <div className="manage-users-container">
                     <div className="user-header">
-                        <div className="title"><h3>Table Users</h3></div>
-                        <div className="actions">
-                            <button className="btn btn-success">Refest</button>
-                            <button className="btn btn-primary" onClick={() => setIsShowModalUser(true)}>Add new users</button>
+                        <div className="title mt-3"><h3>Manage Users</h3></div>
+                        <div className="actions my-3">
+                            <button className="btn btn-success refresh" onClick={() => handleRefesh()}>
+                                <i class="fa fa-refresh "></i>
+                                Refresh
+                            </button>
+                            <button className="btn btn-primary" onClick={() => handleCreateUser()}>
+                                <i class="fa fa-plus-circle"></i>
+                                Add new users
+                            </button>
                         </div>
                     </div>
                     <div className="user-body">
@@ -80,14 +105,28 @@ const Users = (props) => {
                                         {listUsers.map((item, index) => {
                                             return (
                                                 <tr key={`row-${index}`}>
-                                                    <td>{index + 1}</td>
+                                                    <td>{(currentPage - 1) * currentLimit + index + 1}</td>
                                                     <td>{item.id}</td>
                                                     <td>{item.email}</td>
                                                     <td>{item.username}</td>
                                                     <td>{item.Group ? item.Group.name : ''}</td>
                                                     <td>
-                                                        <button className="btn btn-warning mx-3">Edit</button>
-                                                        <button className="btn btn-danger" onClick={() => handleDeleteUser(item)}>Delete</button>
+                                                        <span
+                                                            title="Edit"
+                                                        >
+                                                            <button className="btn btn-warning mx-3"
+                                                                onClick={() => handleEditUser(item)}>
+                                                                <i class="fa fa-pencil "></i>
+                                                                Edit
+                                                            </button>
+                                                        </span>
+                                                        <span title="Delete">
+                                                            <button className="btn btn-danger"
+                                                                onClick={() => handleDeleteUser(item)}>
+                                                                <i class="fa fa-trash "></i>
+                                                                Delete
+                                                            </button>
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             )
@@ -124,7 +163,7 @@ const Users = (props) => {
                         </div>
                     }
                 </div>
-            </div>
+            </div >
             <ModalDelete
                 show={isShowModalDelete}
                 handleClose={handleClose}
@@ -132,9 +171,10 @@ const Users = (props) => {
                 dataModal={dataModal}
             />
             <ModalUser
-                title={"Create new user"}
                 onHide={onHideModalUser}
                 show={isShowModalUser}
+                action={actionModalUser}
+                dataModalUser={dataModalUser}
             />
         </>
 
