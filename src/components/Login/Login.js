@@ -34,7 +34,7 @@ const Login = (props) => {
             return;
         }
         let res = await handleLoginService(valueLogin, password);
-        if (res && res.data && +res.data.EC === 0) {
+        if (res && +res.EC === 0) {
             //Success
             // Dùng sessionStorage để lưu phiên đăng nhập của người dùng
             let data = {
@@ -47,8 +47,8 @@ const Login = (props) => {
             //redux
 
         }
-        if (res && res.data && +res.data.EC !== 0) {
-            toast.error(res.data.EM)
+        if (res && +res.EC !== 0) {
+            toast.error(res.EM)
         }
     }
     const handlePressEnter = (event) => {

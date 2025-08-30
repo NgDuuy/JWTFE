@@ -23,10 +23,10 @@ const Users = (props) => {
     const fetchUserData = async () => {
 
         let respone = await fetchUsersService(currentPage, currentLimit);
-
-        if (respone && respone.data && respone.data.EC === 0) {
-            setListUsers(respone.data.DT.users)
-            setTotalPage(respone.data.DT.totalPages)
+        console.log("Check responce", respone)
+        if (respone && respone && respone.EC === 0) {
+            setListUsers(respone.DT.users)
+            setTotalPage(respone.DT.totalPages)
         }
     }
     const handlePageClick = async (event) => {
@@ -48,13 +48,13 @@ const Users = (props) => {
     }
     const confirmDeleteUser = async () => {
         let respone = await deleteUserService(dataModal);
-        console.log("respone.data.EC: ", respone.data.EC)
-        if (respone && respone.data.EC === 0) {
+        console.log("respone.EC: ", respone.EC)
+        if (respone && respone.EC === 0) {
             await fetchUserData();
             setIsShowModalDelete(false)
-            toast.success(respone.data.EM)
+            toast.success(respone.EM)
         } else {
-            toast.error(respone.data.EM)
+            toast.error(respone.EM)
         }
     }
     const handleEditUser = (user) => {
