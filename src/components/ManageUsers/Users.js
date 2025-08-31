@@ -19,11 +19,13 @@ const Users = (props) => {
     const [actionModalUser, setActionModalUser] = useState("")
     useEffect(() => {
         fetchUserData();
+        let c = document.cookie.split(";").reduce((ac, cv, i) => Object.assign(ac, { [cv.split('=')[0]]: cv.split('=')[1] }), {});
+
+        console.log(c);
     }, [currentPage])
     const fetchUserData = async () => {
 
         let respone = await fetchUsersService(currentPage, currentLimit);
-        console.log("Check responce", respone)
         if (respone && respone && respone.EC === 0) {
             setListUsers(respone.DT.users)
             setTotalPage(respone.DT.totalPages)
