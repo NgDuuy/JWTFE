@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import './Login.scss';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { handleLoginService } from '../../service/userService';
+import { UserContext } from '../../context/UserContext';
 const Login = (props) => {
+    const { loginContext } = useContext(UserContext)
     let history = useHistory();
     const [valueLogin, setValueLogin] = useState('');
     const [password, setPassword] = useState('');
@@ -35,17 +37,16 @@ const Login = (props) => {
         }
         let res = await handleLoginService(valueLogin, password);
         if (res && +res.EC === 0) {
-            //Success
-            // Dùng sessionStorage để lưu phiên đăng nhập của người dùng
+            let groupWithRoles = res.DT.groupWithRoles;
+            let email = res.DT.email;
+            let username = res.DT.username;
+            let token = res.DT.access_token;
             let data = {
                 isAuthenticated: true,
-                token: 'fake token'
+                token: token,
+                account: { groupWithRoles, email, username }
             }
-            sessionStorage.setItem('account', JSON.stringify(data))
-            history.push("/users");
-            // window.location.reload();
-            //redux
-
+            loginContext(data)
         }
         if (res && +res.EC !== 0) {
             toast.error(res.EM)
@@ -56,13 +57,6 @@ const Login = (props) => {
             handleLogin();
         }
     }
-    useEffect(() => {
-        let session = sessionStorage.getItem('account');
-        if (session) {
-            history.push("/")
-            window.location.reload();
-        }
-    }, []);
     return (
         <div className="login-container">
             <div className="container" >

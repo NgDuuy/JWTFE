@@ -32,7 +32,6 @@ const ModalUser = (props) => {
         getGroup()
     }, [])
     useEffect(() => {
-        console.log("Check data: ", dataModalUser)
         if (action === "UPDATE") {
             console.log("Check dataModalUser org: ", dataModalUser);
             console.log("check dataModalUser: ", ({

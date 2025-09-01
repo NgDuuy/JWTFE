@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchUsersService, deleteUserService } from "../../service/userService";
 import ReactPaginate from "react-paginate";
 import { toast } from "react-toastify";
 import ModalDelete from "./ModalDelete";
 import ModalUser from "./ModalUser";
-import { set, size } from "lodash";
 const Users = (props) => {
     const [listUsers, setListUsers] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
@@ -19,12 +18,8 @@ const Users = (props) => {
     const [actionModalUser, setActionModalUser] = useState("")
     useEffect(() => {
         fetchUserData();
-        let c = document.cookie.split(";").reduce((ac, cv, i) => Object.assign(ac, { [cv.split('=')[0]]: cv.split('=')[1] }), {});
-
-        console.log(c);
     }, [currentPage])
     const fetchUserData = async () => {
-
         let respone = await fetchUsersService(currentPage, currentLimit);
         if (respone && respone && respone.EC === 0) {
             setListUsers(respone.DT.users)
