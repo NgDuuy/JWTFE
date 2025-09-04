@@ -1,7 +1,5 @@
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route, useLocation
+    Switch, Route, useLocation
 } from 'react-router-dom';
 import Login from '../components/Login/Login';
 import Register from '../components/Register/Register';

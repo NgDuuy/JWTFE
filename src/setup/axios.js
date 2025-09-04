@@ -9,10 +9,11 @@ const instance = axios.create({
 // Change cookie from Be to Fe
 // instance.defaults.withCredentials = true
 
-// instance.defaults.headers.common['Authorization'] = "AUTO_TOKEN";
+// instance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("jwt")}`;
 // // Add a request interceptor
 instance.interceptors.request.use(function (config) {
     // Do something before request is sent
+    config.headers.Authorization = `Bearer ${localStorage.getItem("jwt")}`;
     return config;
 }, function (error) {
     // Do something with request error
@@ -35,14 +36,13 @@ instance.interceptors.response.use(function (response) {
         // authentication (token related issues)
         case 401: {
             toast.error("Unauthorized the user. Please login...")
-            window.location.href = '/login';
-            return Promise.reject((401));
+            return error.response.data;
         }
 
         // forbidden (permission related issues)
         case 403: {
             toast.error("You don't have permission to access")
-            return Promise.reject((403));
+            return error.response.data
         }
 
         // bad request

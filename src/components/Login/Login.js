@@ -1,9 +1,9 @@
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import './Login.scss';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { handleLoginService } from '../../service/userService';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/userContext';
 const Login = (props) => {
     const { loginContext } = useContext(UserContext)
     let history = useHistory();
@@ -46,7 +46,9 @@ const Login = (props) => {
                 token: token,
                 account: { groupWithRoles, email, username }
             }
+            localStorage.setItem('jwt', token)
             loginContext(data)
+            history.push("/users");
         }
         if (res && +res.EC !== 0) {
             toast.error(res.EM)

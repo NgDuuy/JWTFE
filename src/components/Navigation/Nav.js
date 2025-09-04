@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import './Nav.scss'
 import { NavLink, useLocation } from "react-router-dom";
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/userContext';
 
 const Nav = (props) => {
     const { user } = useContext(UserContext);
     const location = useLocation();
-    if (user && user.isAuthenticated === true || location.pathname === '/') {
+    if ((user && user.isAuthenticated === true) || (location.pathname === '/')) {
         return (
             <>
                 <div className='topnav'>
